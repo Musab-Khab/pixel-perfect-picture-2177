@@ -114,6 +114,31 @@ function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    const targets = Array.from(document.querySelectorAll<HTMLElement>("[data-stat-target]"));
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let frame = 0;
+    const start = performance.now();
+    const duration = 1000;
+    const animate = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      targets.forEach((element) => {
+        const target = Number(element.dataset.statTarget);
+        element.textContent = String(Math.round(target * eased));
+      });
+      if (progress < 1) frame = window.requestAnimationFrame(animate);
+    };
+    if (countsActive) {
+      if (prefersReducedMotion) {
+        targets.forEach((element) => { element.textContent = element.dataset.statTarget ?? "0"; });
+      } else {
+        frame = window.requestAnimationFrame(animate);
+      }
+    }
+    return () => window.cancelAnimationFrame(frame);
+  }, [countsActive]);
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
@@ -204,11 +229,11 @@ function HomePage() {
 
       <section className="stockists-section" id="stockists"><div className="stockists-inner reveal"><div className="stockists-mark"><LibraryBig aria-hidden="true" /></div><div><p className="eyebrow">FIND US NEAR YOU</p><h2>Good books belong<br />in <span>good company.</span></h2><p>Looking for a Turnkey book? Get in touch and we’ll help you find a stockist near you.</p></div><a className="stockists-link" href="#contact">Find a stockist <ArrowRight aria-hidden="true" /></a></div></section>
 
-      <section className="newsletter-section"><div className="newsletter-inner"><div className="newsletter-copy reveal"><p className="eyebrow">A NOTE FROM TURNKEY</p><h2>Stay curious.<br /><span>Stay connected.</span></h2><p>Hear about our latest books, learning resources, and news from the world of education.</p></div><form className="newsletter-form reveal" onSubmit={(event) => { event.preventDefault(); setNewsletterSent(true); }}><label htmlFor="newsletter-email">Your email address</label><div className="newsletter-field"><Mail aria-hidden="true" /><input id="newsletter-email" type="email" placeholder="you@example.com" required aria-label="Email address" /><Button type="submit" size="lg" aria-label="Subscribe to newsletter">{newsletterSent ? <>You’re on the list <Check /></> : <>Keep me posted <ArrowRight /></>}</Button></div><p className="form-note">{newsletterSent ? "Thanks for your interest. Email subscriptions are not connected yet." : "A thoughtful update, now and then. No clutter."}</p></form></div></section>
+      <section className="newsletter-section" id="careers"><div className="newsletter-inner"><div className="newsletter-copy reveal"><p className="eyebrow">A NOTE FROM TURNKEY</p><h2>Stay curious.<br /><span>Stay connected.</span></h2><p>Hear about our latest books, learning resources, and news from the world of education.</p></div><form className="newsletter-form reveal" onSubmit={(event) => { event.preventDefault(); setNewsletterSent(true); }}><label htmlFor="newsletter-email">Your email address</label><div className="newsletter-field"><Mail aria-hidden="true" /><input id="newsletter-email" type="email" placeholder="you@example.com" required aria-label="Email address" /><Button type="submit" size="lg" aria-label="Subscribe to newsletter">{newsletterSent ? <>You’re on the list <Check /></> : <>Keep me posted <ArrowRight /></>}</Button></div><p className="form-note">{newsletterSent ? "Thanks for your interest. Email subscriptions are not connected yet." : "A thoughtful update, now and then. No clutter."}</p></form></div></section>
 
       <section className="contact-section" id="contact"><div className="section-inner contact-inner"><div className="contact-heading reveal"><p className="eyebrow">WE’D LOVE TO HEAR FROM YOU</p><h2>Let’s make<br /><span>something matter.</span></h2><p>Questions about our books, academic support, or working together? Our team would be glad to help.</p><a className="contact-email" href="mailto:hello@turnkeypublishers.com">hello@turnkeypublishers.com <ArrowRight aria-hidden="true" /></a><small>Email shown as a contact placeholder.</small></div><div className="contact-details reveal"><div className="contact-detail"><span><MapPin aria-hidden="true" /></span><div><p>COME SAY HELLO</p><h3>Our Karachi office</h3><address>27/C, Mezzanine Floor,<br />13th Commercial Street, Phase II Ext,<br />DHA, Karachi</address></div></div><div className="contact-detail"><span><Phone aria-hidden="true" /></span><div><p>GIVE US A CALL</p><h3>Contact our team</h3><span className="detail-placeholder">Phone number coming soon</span></div></div><div className="contact-detail"><span><ChevronDown aria-hidden="true" /></span><div><p>WHEN WE’RE AROUND</p><h3>Office hours</h3><span className="detail-placeholder">Please contact us to arrange a visit</span></div></div><div className="contact-map"><span className="map-mark"><MapPin aria-hidden="true" /></span><span className="map-label">DHA · KARACHI</span><span className="map-caption">27/C, 13th Commercial Street<br />Phase II Ext</span></div></div></div></section>
 
-      <footer className="site-footer"><div className="footer-main"><a href="#home" className="brand footer-brand"><span className="brand-symbol"><BookOpen aria-hidden="true" /></span><span className="brand-name">turnkey<span>publishers</span></span></a><p className="footer-description">Thoughtfully made educational books and learning resources for curious minds and brighter futures.</p><div className="footer-social"><a href="mailto:hello@turnkeypublishers.com" aria-label="Email Turnkey Publishers"><Mail aria-hidden="true" /></a><a href="#contact" aria-label="Contact Turnkey Publishers"><Phone aria-hidden="true" /></a></div><div className="footer-links"><div><h3>EXPLORE</h3><a href="#home">Home</a><a href="#about">About us</a><a href="#products">Products</a><a href="#support">Academic support</a></div><div><h3>MORE</h3><a href="#stockists">Stockists</a><a href="#careers">Careers</a><a href="#contact">Contact us</a><a href="#latest">Latest books</a></div></div></div><div className="footer-bottom"><span>© 2026 Turnkey Publishers. All rights reserved.</span><span>MADE FOR MINDS THAT NEVER STOP GROWING <Sparkles aria-hidden="true" /></span><a href="#home" aria-label="Back to top">Back to top ↑</a></div></footer>
+      <footer className="site-footer"><div className="footer-main"><div className="footer-brand-block"><a href="#home" className="brand footer-brand"><span className="brand-symbol"><BookOpen aria-hidden="true" /></span><span className="brand-name">turnkey<span>publishers</span></span></a><p className="footer-description">Thoughtfully made educational books and learning resources for curious minds and brighter futures.</p><div className="footer-social"><a href="mailto:hello@turnkeypublishers.com" aria-label="Email Turnkey Publishers"><Mail aria-hidden="true" /></a><a href="#contact" aria-label="Contact Turnkey Publishers"><Phone aria-hidden="true" /></a></div></div><div className="footer-links"><div><h3>EXPLORE</h3><a href="#home">Home</a><a href="#about">About us</a><a href="#products">Products</a><a href="#support">Academic support</a></div><div><h3>MORE</h3><a href="#stockists">Stockists</a><a href="#careers">Careers</a><a href="#contact">Contact us</a><a href="#latest">Latest books</a></div></div></div><div className="footer-bottom"><span>© 2026 Turnkey Publishers. All rights reserved.</span><span>MADE FOR MINDS THAT NEVER STOP GROWING <Sparkles aria-hidden="true" /></span><a href="#home" aria-label="Back to top">Back to top ↑</a></div></footer>
     </main>
   );
 }
